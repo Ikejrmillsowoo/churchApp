@@ -14,5 +14,5 @@ Never overwrite prior entries.
   - Removed the unused demo SVGs and Vercel/Next marketing content from the starter.
   - Kept CLAUDE.md and BUILD_GUIDE.md at the repo root.
 - Manual steps you must do: None for Phase 0. (Run `npm install` after pulling, since `node_modules` is git-ignored.)
-- Status: in progress (pushed to branch; PR not yet opened)
+- Status: PR opened #1
 - Next: Phase 1 — add the Supabase client (browser + server helpers), a `.env.local.example` listing env var names, and SQL migrations with Row Level Security for the `profiles`, `events`, and `daily_verse` tables.
