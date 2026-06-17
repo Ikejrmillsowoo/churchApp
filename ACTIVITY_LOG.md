@@ -6,7 +6,7 @@ Never overwrite prior entries.
 ## [2026-06-17 05:00] Phase 2 — Authentication & roles
 - Branch: claude/optimistic-goodall-do8aqs
 - What I did: Implemented email/password signup, login, and logout with Supabase Auth; added route-protection middleware so only signed-in users can reach the app; added a DB trigger that creates a pending-member profile on signup; and added server-side `getProfile`/`isAdmin` helpers. The home screen now greets the member and shows their approval status with a sign-out button.
-- Files added/changed: middleware.ts, lib/supabase/middleware.ts, lib/auth.ts, lib/types.ts, app/auth/actions.ts, app/auth/confirm/route.ts, app/login/page.tsx, app/signup/page.tsx, app/error/page.tsx, app/page.tsx, supabase/migrations/0004_handle_new_user.sql
+- Files added/changed: middleware.ts, lib/supabase/middleware.ts, lib/auth.ts, lib/types.ts, app/auth/actions.ts, app/auth/confirm/route.ts, app/login/page.tsx, app/signup/page.tsx, app/error/page.tsx, app/page.tsx, supabase/migrations/0004_handle_new_user.sql, supabase/migrations/0005_fix_protect_trigger.sql, supabase/migrations/0001_init_profiles.sql (trigger fix)
 - Key decisions:
   - New signups become pending members via a `SECURITY DEFINER` trigger (`handle_new_user`) on `auth.users`, rather than an app-side insert. This works even when email confirmation is on (no session yet) and keeps role/status at their safe defaults ('member'/'pending').
   - Auth uses `@supabase/ssr` cookie sessions. Middleware refreshes the session and redirects unauthenticated users to `/login`; public prefixes are `/login`, `/signup`, `/auth`, `/error`.
@@ -14,7 +14,7 @@ Never overwrite prior entries.
   - Added `app/auth/confirm/route.ts` to handle the email confirmation link (verifyOtp) — requires Supabase redirect URL config (see manual steps).
   - Defined a local `Profile` type (lib/types.ts) to avoid `any`; can be swapped for Supabase-generated types later.
 - Manual steps you must do:
-  - Run the new migration `supabase/migrations/0004_handle_new_user.sql` in the Supabase SQL Editor.
+  - Run the new migrations `supabase/migrations/0004_handle_new_user.sql` and `supabase/migrations/0005_fix_protect_trigger.sql` in the Supabase SQL Editor. (0005 fixes a bootstrap bug where the protect trigger blocked promoting the first admin from the SQL Editor.)
   - In Supabase → Authentication → URL Configuration, set the Site URL (e.g. http://localhost:3000) and add `…/auth/confirm` as a redirect URL. For local testing you may disable "Confirm email" under Authentication → Providers → Email to skip the email step.
   - Ensure `.env.local` has the three Supabase keys filled in.
   - To create your first admin, sign up, then in the SQL Editor run:
