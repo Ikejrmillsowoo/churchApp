@@ -1,5 +1,5 @@
--- 0003_daily_verse.sql
--- Cached "scripture of the day" (Phase 6). A daily Vercel Cron job fetches a verse from
+-- Migration: cached "scripture of the day" table and Row Level Security (Phase 6).
+-- A daily Vercel Cron job fetches a verse from
 -- bible-api.com and upserts one row per date using the service role key (which bypasses RLS).
 -- Depends on helpers from 0001 (is_admin).
 

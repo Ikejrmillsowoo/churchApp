@@ -1,5 +1,5 @@
--- 0002_events.sql
--- Church events calendar (Phase 5). Admins manage events; approved members read them.
+-- Migration: events calendar table and Row Level Security (Phase 5).
+-- Admins manage events; approved members read them.
 -- Depends on helpers from 0001 (is_admin, current_status, set_updated_at).
 
 create table if not exists public.events (

@@ -1,5 +1,4 @@
--- 0001_init_profiles.sql
--- Core extensions, shared helper functions, and the `profiles` table with Row Level Security.
+-- Migration: profiles table, shared helper functions, and Row Level Security.
 -- profiles holds one row per auth user, including their role and approval status.
 
 create extension if not exists pgcrypto;
