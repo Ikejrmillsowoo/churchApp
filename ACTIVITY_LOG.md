@@ -3,6 +3,21 @@
 A durable, append-only record of work on the Church App. One entry per phase.
 Never overwrite prior entries.
 
+## [2026-06-18 17:00] Phase 4 — Member signup + admin approval + directory
+- Branch: claude/optimistic-goodall-do8aqs
+- What I did: Built the admin approvals screen (approve/reject pending members), the approved-members directory with opt-in contact sharing, and a member profile page to set name/phone and choose what to share. Public signup into a pending profile was already in place (Phase 2 trigger).
+- Files added/changed: supabase/migrations/0006_member_directory.sql, lib/types.ts, app/(app)/directory/page.tsx, app/(app)/profile/page.tsx, app/(app)/profile/actions.ts, app/(app)/admin/layout.tsx, app/(app)/admin/page.tsx, app/(app)/admin/actions.ts, app/(app)/admin/approvals/page.tsx, app/(app)/page.tsx
+- Key decisions:
+  - Opt-in contact sharing is enforced at the database level: migration 0006 drops the broad "approved can view approved" policy (which exposed every approved member's raw email/phone) and replaces it with a `member_directory` masking view. The view runs with `security_invoker = false` and gates on `current_status() = 'approved'`, so only approved callers get rows and email/phone appear only when `share_email`/`share_phone` are true. Members can now read only their OWN full row from the base table.
+  - Admin approvals use the regular server client (RLS `is_admin()` permits the update); actions also call `isAdmin()` as defense in depth. Approve sets status='approved', reject sets status='rejected'.
+  - Added an `(app)/admin/layout.tsx` guard so every /admin route is admin-only server-side, complementing the hidden nav tab.
+  - Profile page lets members edit name/phone and toggle directory sharing (private by default); the auth email is shown read-only.
+- Manual steps you must do:
+  - Run `supabase/migrations/0006_member_directory.sql` in the Supabase SQL Editor.
+  - To test end to end: sign up a second account (pending), approve it from /admin/approvals as your admin account, then have that member set a phone and toggle sharing on their /profile page and confirm it appears/disappears in /directory.
+- Status: in progress (pushed to branch; PR not yet opened)
+- Next: Phase 5 — events calendar (admin create/edit/delete events; members see a list/month view and can download an .ics file).
+
 ## [2026-06-18 16:00] Phase 3 — PWA shell & navigation
 - Branch: claude/optimistic-goodall-do8aqs
 - What I did: Made the app installable as a PWA (manifest, icons, service worker) and built the mobile-first authenticated shell with a fixed bottom navigation (Home, Directory, Calendar, Messages, plus an admin-only Admin tab). Added placeholder screens for the not-yet-built destinations.
