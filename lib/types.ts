@@ -47,3 +47,12 @@ export type Event = {
   created_at: string;
   updated_at: string;
 };
+
+// A cached scripture-of-the-day entry (daily_verse table, Phase 6).
+export type DailyVerse = {
+  id: string;
+  verse_date: string;
+  reference: string;
+  text: string;
+  created_at: string;
+};
