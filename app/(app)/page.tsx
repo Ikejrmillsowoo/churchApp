@@ -1,5 +1,5 @@
-// app/page.tsx — authenticated home screen. Greets the member and shows their approval
-// status. Route protection is enforced by middleware; this is a defensive fallback.
+// app/(app)/page.tsx — authenticated home screen. Greets the member and shows their
+// approval status with a sign-out button.
 import { redirect } from "next/navigation";
 import { signOut } from "@/app/auth/actions";
 import { getProfile } from "@/lib/auth";
