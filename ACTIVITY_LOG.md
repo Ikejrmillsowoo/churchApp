@@ -3,6 +3,19 @@
 A durable, append-only record of work on the Church App. One entry per phase.
 Never overwrite prior entries.
 
+## [2026-06-18 18:00] Phase 5 — Events calendar
+- Branch: claude/optimistic-goodall-do8aqs
+- What I did: Built the events calendar. Admins can create/edit/delete events; approved members see an upcoming-events list and can download an .ics file ("Add to my calendar") per event. The events table and its RLS already existed from Phase 1, so no new migration was needed.
+- Files added/changed: lib/types.ts (Event type), lib/datetime.ts, lib/ics.ts, components/event-form.tsx, app/(app)/calendar/page.tsx, app/(app)/calendar/[id]/ics/route.ts, app/(app)/admin/events/page.tsx, app/(app)/admin/events/new/page.tsx, app/(app)/admin/events/[id]/edit/page.tsx, app/(app)/admin/events/actions.ts, app/(app)/admin/page.tsx
+- Key decisions:
+  - Event writes go through the regular server client (RLS already restricts insert/update/delete to admins); actions also call isAdmin() as defense in depth.
+  - .ics download is a route handler at /calendar/[id]/ics that runs as the signed-in user, so RLS controls who can fetch the event; it streams a single VEVENT with attachment headers.
+  - Times are handled in UTC throughout (datetime-local inputs are interpreted as UTC and displayed as UTC) for deterministic server rendering. Per-user timezones are a deliberate later enhancement — noted so it isn't mistaken for a bug.
+  - Reused the admin layout guard from Phase 4 so all /admin/events routes are admin-only; added an Events link on the admin hub.
+- Manual steps you must do: None — the events schema/RLS shipped in Phase 1. (Sign in as admin → /admin/events → New event to test; approved members then see it on /calendar and can download the .ics.)
+- Status: in progress (pushed to branch; PR not yet opened)
+- Next: Phase 6 — scripture of the day (Vercel Cron fetches a verse daily from bible-api.com and caches it in daily_verse; home reads the cache).
+
 ## [2026-06-18 17:00] Phase 4 — Member signup + admin approval + directory
 - Branch: claude/optimistic-goodall-do8aqs
 - What I did: Built the admin approvals screen (approve/reject pending members), the approved-members directory with opt-in contact sharing, and a member profile page to set name/phone and choose what to share. Public signup into a pending profile was already in place (Phase 2 trigger).
