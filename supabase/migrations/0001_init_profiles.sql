@@ -73,7 +73,11 @@ security definer
 set search_path = public
 as $$
 begin
-  if public.is_admin() then
+  -- Allow privileged/server contexts: admins, the service role, or direct SQL
+  -- (SQL Editor / superuser) where there is no end-user JWT (auth.uid() is null).
+  -- Regular signed-in members always have auth.uid() set and stay blocked from
+  -- changing their own role/status. RLS still governs who may issue the UPDATE.
+  if public.is_admin() or auth.uid() is null then
     return new;
   end if;
   if new.role is distinct from old.role then

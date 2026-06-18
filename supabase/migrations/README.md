@@ -7,6 +7,8 @@ SQL migrations for the Church App database. Run them **in numeric order**.
 | `0001_init_profiles.sql`   | `pgcrypto`, helper functions, and the `profiles` table (+ RLS)      |
 | `0002_events.sql`          | The `events` table (+ RLS)                                           |
 | `0003_daily_verse.sql`     | The `daily_verse` table (+ RLS)                                      |
+| `0004_handle_new_user.sql` | Trigger creating a pending-member profile on signup (Phase 2)       |
+| `0005_fix_protect_trigger.sql` | Fixes the protect trigger so the first admin can be bootstrapped |
 
 Every table ships with Row Level Security **enabled** and explicit policies.
 
