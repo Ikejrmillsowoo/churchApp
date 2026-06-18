@@ -1,9 +1,11 @@
-// app/(app)/page.tsx — authenticated home screen. Greets the member and shows their
-// approval status with a sign-out button.
+// app/(app)/page.tsx — authenticated home screen. Shows the scripture of the day (cached in
+// daily_verse), greets the member, and shows their approval status with a sign-out button.
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { signOut } from "@/app/auth/actions";
 import { getProfile } from "@/lib/auth";
+import { createClient } from "@/lib/supabase/server";
+import type { DailyVerse } from "@/lib/types";
 
 const STATUS_MESSAGE: Record<string, string> = {
   pending: "Your membership is awaiting admin approval.",
@@ -15,8 +17,30 @@ export default async function Home() {
   const profile = await getProfile();
   if (!profile) redirect("/login");
 
+  const supabase = await createClient();
+  const { data: verse } = await supabase
+    .from("daily_verse")
+    .select("reference, text, verse_date")
+    .order("verse_date", { ascending: false })
+    .limit(1)
+    .maybeSingle<Pick<DailyVerse, "reference" | "text" | "verse_date">>();
+
   return (
-    <main className="flex flex-1 flex-col items-center justify-center gap-6 px-6 py-16 text-center">
+    <main className="flex flex-1 flex-col items-center justify-center gap-8 px-6 py-16 text-center">
+      {verse ? (
+        <figure className="w-full max-w-md rounded-xl border border-zinc-200 bg-zinc-50 p-5 dark:border-zinc-800 dark:bg-zinc-900/50">
+          <p className="text-xs font-medium uppercase tracking-wide text-zinc-500">
+            Verse of the day
+          </p>
+          <blockquote className="mt-2 text-sm leading-relaxed text-zinc-800 dark:text-zinc-200">
+            {verse.text}
+          </blockquote>
+          <figcaption className="mt-2 text-sm font-semibold text-zinc-600 dark:text-zinc-400">
+            {verse.reference}
+          </figcaption>
+        </figure>
+      ) : null}
+
       <div className="flex flex-col gap-2">
         <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
           Welcome{profile.full_name ? `, ${profile.full_name}` : ""}
