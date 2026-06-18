@@ -3,6 +3,23 @@
 A durable, append-only record of work on the Church App. One entry per phase.
 Never overwrite prior entries.
 
+## [2026-06-18 20:00] Phase 7 — Email mass messaging
+- Branch: claude/optimistic-goodall-do8aqs
+- What I did: Added an admin compose screen that sends a mass email (via Resend) to opted-in members of a chosen audience (approved or pending), with a working per-recipient unsubscribe link, and logs each send in a new messages table. Added a public unsubscribe page.
+- Files added/changed: supabase/migrations/0007_messages.sql, lib/email.ts, lib/types.ts (Message type), app/(app)/admin/messages/page.tsx, app/(app)/admin/messages/actions.ts, app/(app)/admin/page.tsx, app/unsubscribe/page.tsx, app/unsubscribe/actions.ts, lib/supabase/middleware.ts (public /unsubscribe), .env.local.example, package.json (resend)
+- Key decisions:
+  - Migration 0007 adds the messages log table (RLS: admins only) and an `unsubscribe_token uuid` column on profiles for one-click unsubscribe.
+  - Recipients are read with the service-role client (need email + token), filtered by status = audience AND email_opt_in = true AND email is not null. Sends loop over Resend per recipient so each gets its own unsubscribe link; recipient_count records successful sends.
+  - Unsubscribe is a public page outside the (app) shell with a confirm button (so email-client link prefetching can't auto-unsubscribe). The action flips email_opt_in to false via the service-role client (no session) keyed by the token. Members can re-enable from their profile.
+  - The send action guards on isAdmin() and returns a friendly error if RESEND_API_KEY isn't set, so the app builds/runs before email is configured.
+  - Email HTML is built from the plain-text body with escaping; from-address comes from EMAIL_FROM.
+- Manual steps you must do:
+  - Run `supabase/migrations/0007_messages.sql` in the Supabase SQL Editor.
+  - Create a Resend account, add `RESEND_API_KEY`, set `EMAIL_FROM` to a verified-domain sender (the onboarding@resend.dev default only delivers to your own Resend account email), and set `NEXT_PUBLIC_SITE_URL` — in `.env.local` and (later) Vercel env.
+  - Test: as admin, /admin/messages → compose → send to "Approved members"; confirm delivery and that the unsubscribe link flips email_opt_in off (member drops out of the next send).
+- Status: in progress (pushed to branch; PR not yet opened)
+- Next: Phase 8 — deploy to Vercel (env vars, confirm PWA install + signup→approval→directory end to end on the live URL).
+
 ## [2026-06-18 19:00] Phase 6 — Scripture of the day
 - Branch: claude/optimistic-goodall-do8aqs
 - What I did: Added a daily "scripture of the day" feature. A Vercel Cron job fetches the day's curated verse from bible-api.com once a day and caches it in the daily_verse table; the home screen reads the cached verse (reference + text). The daily_verse table/RLS already existed from Phase 1.
