@@ -3,6 +3,21 @@
 A durable, append-only record of work on the Church App. One entry per phase.
 Never overwrite prior entries.
 
+## [2026-06-18 16:00] Phase 3 — PWA shell & navigation
+- Branch: claude/optimistic-goodall-do8aqs
+- What I did: Made the app installable as a PWA (manifest, icons, service worker) and built the mobile-first authenticated shell with a fixed bottom navigation (Home, Directory, Calendar, Messages, plus an admin-only Admin tab). Added placeholder screens for the not-yet-built destinations.
+- Files added/changed: app/manifest.ts, public/sw.js, public/icons/* (icon-192, icon-512, icon-maskable-512, apple-touch-icon), scripts/generate-icons.mjs, components/service-worker-register.tsx, components/bottom-nav.tsx, components/placeholder-screen.tsx, app/layout.tsx, app/(app)/layout.tsx, app/(app)/page.tsx (moved from app/page.tsx), app/(app)/directory/page.tsx, app/(app)/calendar/page.tsx, app/(app)/messages/page.tsx, app/(app)/admin/page.tsx, middleware.ts
+- Key decisions:
+  - Used Next's `app/manifest.ts` (served at `/manifest.webmanifest`) plus metadata/viewport for theme color, apple-touch-icon, and standalone display.
+  - Generated placeholder icons (white cross on slate) with a dependency-free Node script (`scripts/generate-icons.mjs`) so no image library is added to the project — swap in real artwork later by editing/replacing the PNGs.
+  - Service worker is network-first with a runtime cache fallback (minimal offline support + satisfies installability). Registered client-side via `ServiceWorkerRegister` in the root layout.
+  - Introduced an `(app)` route group so the bottom nav shell wraps only signed-in screens; `/login`, `/signup`, `/error` stay outside it (no nav). The group layout fetches the profile and passes `isAdmin` to the nav.
+  - Admin tab is hidden for non-admins in the nav, and `/admin` additionally redirects non-admins server-side (defense in depth).
+  - Excluded `manifest.webmanifest`, `sw.js`, and `/icons/` from the auth middleware matcher so they are reachable when logged out (otherwise the manifest/SW would redirect to /login).
+- Manual steps you must do: None. (PWA install is testable once deployed over HTTPS or via localhost; iOS uses "Add to Home Screen" from Safari's share sheet.)
+- Status: in progress (pushed to branch; PR not yet opened)
+- Next: Phase 4 — public signup into profiles (pending), admin approve/reject screen, and the approved-members directory with opt-in contact sharing enforced by RLS.
+
 ## [2026-06-17 05:00] Phase 2 — Authentication & roles
 - Branch: claude/optimistic-goodall-do8aqs
 - What I did: Implemented email/password signup, login, and logout with Supabase Auth; added route-protection middleware so only signed-in users can reach the app; added a DB trigger that creates a pending-member profile on signup; and added server-side `getProfile`/`isAdmin` helpers. The home screen now greets the member and shows their approval status with a sign-out button.
