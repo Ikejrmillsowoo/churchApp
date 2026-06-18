@@ -3,6 +3,24 @@
 A durable, append-only record of work on the Church App. One entry per phase.
 Never overwrite prior entries.
 
+## [2026-06-18 19:00] Phase 6 — Scripture of the day
+- Branch: claude/optimistic-goodall-do8aqs
+- What I did: Added a daily "scripture of the day" feature. A Vercel Cron job fetches the day's curated verse from bible-api.com once a day and caches it in the daily_verse table; the home screen reads the cached verse (reference + text). The daily_verse table/RLS already existed from Phase 1.
+- Files added/changed: lib/verses.ts, lib/types.ts (DailyVerse type), app/api/cron/daily-verse/route.ts, vercel.json, middleware.ts (exclude /api), .env.local.example (CRON_SECRET), app/(app)/page.tsx
+- Key decisions:
+  - Curated a 40-reference rotation (`lib/verses.ts`); the day's reference is chosen deterministically by day index, so it rotates daily and is stable within a day.
+  - The cron endpoint uses the service-role admin client (bypasses RLS) to upsert by verse_date, and is idempotent (skips if today is already cached). It is protected by a `CRON_SECRET` bearer token that Vercel Cron sends automatically.
+  - bible-api.com returns the public-domain WEB translation by default — no API key and no licensing concerns; results are cached so we don't hit the API per page view.
+  - Excluded `/api/` from the auth middleware matcher so the cron endpoint isn't redirected to /login (it guards itself with the secret). Other API routes will likewise manage their own auth.
+  - Home reads the most recent cached verse (not strictly today's) so it still shows something if a day's job hasn't run yet.
+- Manual steps you must do:
+  - Add a `CRON_SECRET` env var (a long random string) in `.env.local` and in the Vercel project settings.
+  - Vercel Cron (configured in vercel.json) runs daily at 05:00 UTC once deployed — crons only fire on production deployments. To seed/test now, call the endpoint with the secret, e.g.:
+    `curl -H "Authorization: Bearer $CRON_SECRET" https://<your-app>/api/cron/daily-verse`
+    (locally: against http://localhost:3000 with the dev server running). It returns {status:"created"|"exists"}.
+- Status: in progress (pushed to branch; PR not yet opened)
+- Next: Phase 7 — email mass messaging (admin compose, audience selection, send via Resend to opted-in members, unsubscribe link, log sends in a messages table).
+
 ## [2026-06-18 18:00] Phase 5 — Events calendar
 - Branch: claude/optimistic-goodall-do8aqs
 - What I did: Built the events calendar. Admins can create/edit/delete events; approved members see an upcoming-events list and can download an .ics file ("Add to my calendar") per event. The events table and its RLS already existed from Phase 1, so no new migration was needed.
