@@ -34,3 +34,16 @@ export type PendingMember = {
   phone: string | null;
   created_at: string;
 };
+
+// A church event (events table, Phase 5).
+export type Event = {
+  id: string;
+  title: string;
+  description: string | null;
+  location: string | null;
+  starts_at: string;
+  ends_at: string | null;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+};

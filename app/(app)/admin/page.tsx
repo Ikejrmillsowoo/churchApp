@@ -37,8 +37,20 @@ export default async function AdminPage() {
         ) : null}
       </Link>
 
+      <Link
+        href="/admin/events"
+        className="flex items-center justify-between rounded-lg border border-zinc-200 p-4 transition-colors hover:bg-zinc-50 dark:border-zinc-800 dark:hover:bg-zinc-900"
+      >
+        <div>
+          <p className="font-medium">Events</p>
+          <p className="text-sm text-zinc-600 dark:text-zinc-400">
+            Create and manage church events
+          </p>
+        </div>
+      </Link>
+
       <div className="rounded-lg border border-dashed border-zinc-300 p-4 text-sm text-zinc-500 dark:border-zinc-700">
-        Event editor and message composer arrive in later phases.
+        Message composer arrives in a later phase.
       </div>
     </main>
   );
