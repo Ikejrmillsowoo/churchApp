@@ -10,6 +10,7 @@ const PUBLIC_PREFIXES = [
   "/auth",
   "/error",
   "/unsubscribe",
+  "/forgot-password",
 ];
 
 export async function updateSession(request: NextRequest) {
