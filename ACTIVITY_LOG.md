@@ -3,6 +3,21 @@
 A durable, append-only record of work on the Church App. One entry per phase.
 Never overwrite prior entries.
 
+## [2026-07-07 20:00] Phase 8 — Deploy to Vercel
+- Branch: claude/optimistic-goodall-do8aqs
+- What I did: Prepared the app for production deployment. Verified the deploy config (vercel.json cron, the 7 required env vars) and wrote a full go-live guide (DEPLOYMENT.md) covering Supabase/Resend production setup, the Vercel import + env vars, cron verification, and an end-to-end smoke-test checklist. Linked it from the README. The actual deployment (importing the repo, setting env vars, clicking Deploy) is done in the Vercel/Supabase dashboards.
+- Files added/changed: DEPLOYMENT.md, README.md, ACTIVITY_LOG.md
+- Key decisions:
+  - No app code changes were needed for deploy — the codebase already reads all config from env vars (NEXT_PUBLIC_SUPABASE_URL/ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, CRON_SECRET, RESEND_API_KEY, EMAIL_FROM, NEXT_PUBLIC_SITE_URL) and vercel.json already registers the daily cron.
+  - Documented the two easy-to-miss post-deploy steps: set NEXT_PUBLIC_SITE_URL to the real Vercel URL (and redeploy), and update the Supabase Auth Site URL + redirect allow-list to the live domain.
+- Manual steps you must do (see DEPLOYMENT.md for the full walkthrough):
+  - Supabase: run migrations 0001–0007 on the prod DB; set Auth Site URL + redirect list to the live URL; configure email templates.
+  - Resend: verify a sending domain, set RESEND_API_KEY + EMAIL_FROM.
+  - Vercel: import the repo, set the 7 env vars (Production), deploy; then set NEXT_PUBLIC_SITE_URL to the assigned URL and redeploy.
+  - Run the go-live smoke test (signup → approval → directory, calendar/.ics, verse cron, email + unsubscribe, password reset, PWA install).
+- Status: in progress (pushed to branch; PR not yet opened)
+- Next: MVP complete after deploy verification. Future roadmap: Phase 9 SMS (Twilio), Phase 10 giving (Stripe), Phase 11 ministries, Phase 12 pastor video, Phase 13 native apps.
+
 ## [2026-06-18 21:00] Fix — Reset link landed on /login instead of /update-password
 - Branch: claude/optimistic-goodall-do8aqs
 - Problem: the default Supabase reset email redirects to `redirectTo` with a `?code=...`. It was pointed at `/update-password` (a page), which can't exchange the code for a session, so the page found no session and bounced to /login.
