@@ -3,6 +3,15 @@
 A durable, append-only record of work on the Church App. One entry per phase.
 Never overwrite prior entries.
 
+## [2026-06-18 21:00] Fix — Reset link landed on /login instead of /update-password
+- Branch: claude/optimistic-goodall-do8aqs
+- Problem: the default Supabase reset email redirects to `redirectTo` with a `?code=...`. It was pointed at `/update-password` (a page), which can't exchange the code for a session, so the page found no session and bounced to /login.
+- Fix: added `app/auth/callback/route.ts` that calls `exchangeCodeForSession(code)` (setting cookies) then forwards to `next`, and changed the reset `redirectTo` to `/auth/callback?next=/update-password`. This works with the default reset email — no dashboard template editing required. (`/auth/confirm` still handles the token_hash flow used for signup confirmation.)
+- Files added/changed: app/auth/callback/route.ts, app/forgot-password/actions.ts
+- Manual steps you must do: Ensure the Supabase redirect allow-list covers `/auth/callback` (the existing `http://localhost:3000/**` and your prod `/**` entries do). The Reset Password email template can stay at its default — if you previously changed it to the token_hash form, that still works too.
+- Note: the code-exchange (PKCE) flow needs the reset to be completed in the same browser it was requested from; cross-device resets would fall back to the token_hash template.
+- Status: in progress (pushed to branch)
+
 ## [2026-06-18 20:30] Enhancement — Forgot / reset password flow
 - Branch: claude/optimistic-goodall-do8aqs
 - What I did: Added a self-service password reset flow (there was no way to recover a lost password before). /forgot-password sends a reset email via Supabase Auth; the link routes through the existing /auth/confirm handler (type=recovery) and lands on /update-password, where the user sets a new password and is signed out to log in fresh. Added a "Forgot password?" link on the login page.
