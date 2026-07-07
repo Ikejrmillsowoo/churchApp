@@ -3,6 +3,22 @@
 A durable, append-only record of work on the Church App. One entry per phase.
 Never overwrite prior entries.
 
+## [2026-06-18 20:30] Enhancement — Forgot / reset password flow
+- Branch: claude/optimistic-goodall-do8aqs
+- What I did: Added a self-service password reset flow (there was no way to recover a lost password before). /forgot-password sends a reset email via Supabase Auth; the link routes through the existing /auth/confirm handler (type=recovery) and lands on /update-password, where the user sets a new password and is signed out to log in fresh. Added a "Forgot password?" link on the login page.
+- Files added/changed: app/forgot-password/page.tsx, app/forgot-password/actions.ts, app/update-password/page.tsx, app/update-password/actions.ts, app/login/page.tsx, lib/supabase/middleware.ts (public /forgot-password)
+- Key decisions:
+  - Reused the token_hash + /auth/confirm pattern (already used for signup confirmation) so the reset works with the SSR cookie session — no new callback route needed.
+  - /forgot-password is public and always shows the same "email sent" message (no account-existence leak); /update-password is NOT public — it requires the recovery session established by the confirm step.
+  - After a successful change, the user is signed out and sent to /login so they re-authenticate with the new password.
+- Manual steps you must do:
+  - In Supabase → Authentication → Email Templates → "Reset Password", set the link to:
+    {{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=recovery&next=/update-password
+    (same token_hash pattern used for the signup confirmation email.)
+  - Ensure NEXT_PUBLIC_SITE_URL and the Supabase redirect allow-list cover /update-password.
+- Status: in progress (pushed to branch; part of the Phase 7 PR)
+- Next: continue to Phase 8 — deploy to Vercel.
+
 ## [2026-06-18 20:00] Phase 7 — Email mass messaging
 - Branch: claude/optimistic-goodall-do8aqs
 - What I did: Added an admin compose screen that sends a mass email (via Resend) to opted-in members of a chosen audience (approved or pending), with a working per-recipient unsubscribe link, and logs each send in a new messages table. Added a public unsubscribe page.
