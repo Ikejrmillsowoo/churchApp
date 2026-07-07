@@ -4,7 +4,14 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 // Path prefixes that are reachable without being signed in.
-const PUBLIC_PREFIXES = ["/login", "/signup", "/auth", "/error"];
+const PUBLIC_PREFIXES = [
+  "/login",
+  "/signup",
+  "/auth",
+  "/error",
+  "/unsubscribe",
+  "/forgot-password",
+];
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });

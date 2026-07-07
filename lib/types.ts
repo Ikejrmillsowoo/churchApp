@@ -56,3 +56,14 @@ export type DailyVerse = {
   text: string;
   created_at: string;
 };
+
+// A logged mass-email send (messages table, Phase 7).
+export type Message = {
+  id: string;
+  subject: string;
+  body: string;
+  audience: "approved" | "pending";
+  sent_by: string | null;
+  recipient_count: number;
+  created_at: string;
+};

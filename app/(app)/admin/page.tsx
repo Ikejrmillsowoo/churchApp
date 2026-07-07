@@ -49,9 +49,17 @@ export default async function AdminPage() {
         </div>
       </Link>
 
-      <div className="rounded-lg border border-dashed border-zinc-300 p-4 text-sm text-zinc-500 dark:border-zinc-700">
-        Message composer arrives in a later phase.
-      </div>
+      <Link
+        href="/admin/messages"
+        className="flex items-center justify-between rounded-lg border border-zinc-200 p-4 transition-colors hover:bg-zinc-50 dark:border-zinc-800 dark:hover:bg-zinc-900"
+      >
+        <div>
+          <p className="font-medium">Messages</p>
+          <p className="text-sm text-zinc-600 dark:text-zinc-400">
+            Email opted-in members
+          </p>
+        </div>
+      </Link>
     </main>
   );
 }
