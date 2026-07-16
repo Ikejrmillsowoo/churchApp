@@ -36,6 +36,12 @@ Secrets live in `.env.local` (git-ignored) — never commit them. The required
 variable names are documented per phase in each pull request and will be added to
 a `.env.local.example` starting in Phase 1.
 
+## Deployment
+
+To take the app live on Vercel (with Supabase + Resend), follow **`DEPLOYMENT.md`** — it
+covers the production env vars, Supabase/Resend setup, the Vercel import, the daily-verse
+cron, and an end-to-end go-live smoke test.
+
 ## Project conventions
 
 See `CLAUDE.md` for the binding workflow, security, and coding rules. Progress is
