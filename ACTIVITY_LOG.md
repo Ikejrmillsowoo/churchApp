@@ -3,6 +3,12 @@
 A durable, append-only record of work on the Church App. One entry per phase.
 Never overwrite prior entries.
 
+## [2026-07-07 21:30] Improvement — surface mass-email send results/errors
+- Branch: claude/optimistic-goodall-do8aqs
+- What I did: The admin message send silently reported only a success count, hiding whether recipients were found and why sends failed (a "sent to 0" gave no clue). Now it reports "Delivered to X of Y recipients", surfaces a recipient-lookup error, and shows the first Resend send error — both a real UX improvement and a diagnostic for the current live test where every send returns 0.
+- Files added/changed: app/(app)/admin/messages/actions.ts, app/(app)/admin/messages/page.tsx
+- Status: in progress (pushed to branch)
+
 ## [2026-07-07 20:00] Phase 8 — Deploy to Vercel
 - Branch: claude/optimistic-goodall-do8aqs
 - What I did: Prepared the app for production deployment. Verified the deploy config (vercel.json cron, the 7 required env vars) and wrote a full go-live guide (DEPLOYMENT.md) covering Supabase/Resend production setup, the Vercel import + env vars, cron verification, and an end-to-end smoke-test checklist. Linked it from the README. The actual deployment (importing the repo, setting env vars, clicking Deploy) is done in the Vercel/Supabase dashboards.

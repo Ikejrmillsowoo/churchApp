@@ -8,9 +8,14 @@ import type { Message } from "@/lib/types";
 export default async function AdminMessagesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ sent?: string; error?: string }>;
+  searchParams: Promise<{
+    sent?: string;
+    found?: string;
+    err?: string;
+    error?: string;
+  }>;
 }) {
-  const { sent, error } = await searchParams;
+  const { sent, found, err, error } = await searchParams;
 
   const supabase = await createClient();
   const { data } = await supabase
@@ -31,7 +36,13 @@ export default async function AdminMessagesPage({
 
       {sent ? (
         <p className="rounded-md bg-green-50 px-3 py-2 text-sm text-green-800 dark:bg-green-950 dark:text-green-200">
-          Message sent to {sent} {sent === "1" ? "member" : "members"}.
+          Delivered to {sent} of {found ?? sent}{" "}
+          {found === "1" ? "recipient" : "recipients"}.
+        </p>
+      ) : null}
+      {err ? (
+        <p className="rounded-md bg-amber-50 px-3 py-2 text-sm text-amber-800 dark:bg-amber-950 dark:text-amber-200">
+          Some sends failed. First error from Resend: {err}
         </p>
       ) : null}
       {error ? (

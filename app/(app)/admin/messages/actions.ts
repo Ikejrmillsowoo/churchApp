@@ -1,6 +1,7 @@
 // app/(app)/admin/messages/actions.ts — admin action to send a mass email via Resend to
 // opted-in members of the chosen audience, with a per-recipient unsubscribe link, then log
-// the send in the messages table.
+// the send in the messages table. Reports how many recipients were found and surfaces the
+// first send/query error so failures are visible instead of silently counting as 0.
 "use server";
 
 import { revalidatePath } from "next/cache";
@@ -30,12 +31,19 @@ export async function sendMessage(formData: FormData) {
   }
 
   const admin = createAdminClient();
-  const { data } = await admin
+  const { data, error: queryError } = await admin
     .from("profiles")
     .select("email, unsubscribe_token")
     .eq("status", audience)
     .eq("email_opt_in", true)
     .not("email", "is", null);
+
+  if (queryError) {
+    redirect(
+      "/admin/messages?error=" +
+        encodeURIComponent(`Recipient lookup failed: ${queryError.message}`),
+    );
+  }
   const recipients = (data ?? []) as Recipient[];
 
   const resend = getResend();
@@ -43,7 +51,7 @@ export async function sendMessage(formData: FormData) {
 
   const results = await Promise.all(
     recipients.map(async (recipient) => {
-      if (!recipient.email) return false;
+      if (!recipient.email) return { ok: false, error: "missing email" };
       const unsubscribeUrl = `${siteUrl}/unsubscribe?token=${recipient.unsubscribe_token}`;
       const { error } = await resend.emails.send({
         from: EMAIL_FROM,
@@ -52,10 +60,11 @@ export async function sendMessage(formData: FormData) {
         html: buildEmailHtml(body, unsubscribeUrl),
         text: `${body}\n\nUnsubscribe: ${unsubscribeUrl}`,
       });
-      return !error;
+      return { ok: !error, error: error?.message ?? null };
     }),
   );
-  const sent = results.filter(Boolean).length;
+  const sent = results.filter((r) => r.ok).length;
+  const firstError = results.find((r) => !r.ok && r.error)?.error ?? null;
 
   const supabase = await createClient();
   const {
@@ -71,5 +80,10 @@ export async function sendMessage(formData: FormData) {
   });
 
   revalidatePath("/admin/messages");
-  redirect(`/admin/messages?sent=${sent}`);
+  const params = new URLSearchParams({
+    sent: String(sent),
+    found: String(recipients.length),
+  });
+  if (firstError) params.set("err", firstError);
+  redirect(`/admin/messages?${params.toString()}`);
 }
