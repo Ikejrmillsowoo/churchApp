@@ -1,5 +1,5 @@
 // app/(app)/admin/page.tsx — admin hub linking to admin tools. Access is gated by the admin
-// layout. Shows a live count of members awaiting approval.
+// layout. Shows a live count of participants awaiting approval.
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 
@@ -16,7 +16,7 @@ export default async function AdminPage() {
       <header>
         <h1 className="text-2xl font-semibold tracking-tight">Admin</h1>
         <p className="text-sm text-zinc-600 dark:text-zinc-400">
-          Manage members and church content.
+          Manage participants and program content.
         </p>
       </header>
 
@@ -25,9 +25,9 @@ export default async function AdminPage() {
         className="flex items-center justify-between rounded-lg border border-zinc-200 p-4 transition-colors hover:bg-zinc-50 dark:border-zinc-800 dark:hover:bg-zinc-900"
       >
         <div>
-          <p className="font-medium">Member approvals</p>
+          <p className="font-medium">Participant approvals</p>
           <p className="text-sm text-zinc-600 dark:text-zinc-400">
-            Review and approve new members
+            Review and approve new participants
           </p>
         </div>
         {pendingCount > 0 ? (
@@ -44,7 +44,7 @@ export default async function AdminPage() {
         <div>
           <p className="font-medium">Events</p>
           <p className="text-sm text-zinc-600 dark:text-zinc-400">
-            Create and manage church events
+            Create and manage events
           </p>
         </div>
       </Link>
@@ -56,7 +56,7 @@ export default async function AdminPage() {
         <div>
           <p className="font-medium">Messages</p>
           <p className="text-sm text-zinc-600 dark:text-zinc-400">
-            Email opted-in members
+            Email opted-in participants
           </p>
         </div>
       </Link>
