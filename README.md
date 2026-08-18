@@ -1,8 +1,9 @@
-# Church App
+# coachIke
 
-A Progressive Web App (PWA) for church membership and engagement — installable on
-iPhone, Android, and desktop browsers. Built phase by phase; see `BUILD_GUIDE.md`
-for the roadmap and `CLAUDE.md` for the project rules.
+A Progressive Web App (PWA) for a coaching program — posts, discussion, and updates,
+installable on iPhone, Android, and desktop browsers. Originally built as a church app
+and rebranded in place; see `BUILD_GUIDE.md` for the original phase roadmap and
+`CLAUDE.md` for the project rules.
 
 ## Stack
 

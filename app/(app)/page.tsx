@@ -1,5 +1,5 @@
 // app/(app)/page.tsx — authenticated home screen. Shows the scripture of the day (cached in
-// daily_verse), greets the member, and shows their approval status with a sign-out button.
+// daily_verse), greets the participant, and shows their approval status with a sign-out button.
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { signOut } from "@/app/auth/actions";
@@ -8,9 +8,9 @@ import { createClient } from "@/lib/supabase/server";
 import type { DailyVerse } from "@/lib/types";
 
 const STATUS_MESSAGE: Record<string, string> = {
-  pending: "Your membership is awaiting admin approval.",
-  approved: "You're an approved member.",
-  rejected: "Your membership request was not approved.",
+  pending: "Your access is awaiting approval.",
+  approved: "You're an approved participant.",
+  rejected: "Your request to join was not approved.",
 };
 
 export default async function Home() {
@@ -46,7 +46,7 @@ export default async function Home() {
           Welcome{profile.full_name ? `, ${profile.full_name}` : ""}
         </h1>
         <p className="text-sm text-zinc-600 dark:text-zinc-400 sm:text-base">
-          {STATUS_MESSAGE[profile.status] ?? "Welcome to the Church App."}
+          {STATUS_MESSAGE[profile.status] ?? "Welcome to coachIke."}
         </p>
       </div>
 

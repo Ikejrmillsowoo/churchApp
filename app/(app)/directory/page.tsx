@@ -1,6 +1,6 @@
-// app/(app)/directory/page.tsx — directory of approved members. Reads the masking view so
-// each member's email/phone appears only if they opted to share it. Non-approved members
-// see a notice instead, and RLS prevents reading the directory at all until approved.
+// app/(app)/directory/page.tsx — directory of approved participants. Reads the masking view
+// so each participant's email/phone appears only if they opted to share it. Non-approved
+// participants see a notice instead, and RLS prevents reading the directory until approved.
 import { redirect } from "next/navigation";
 import { PlaceholderScreen } from "@/components/placeholder-screen";
 import { getProfile } from "@/lib/auth";
@@ -15,7 +15,7 @@ export default async function DirectoryPage() {
     return (
       <PlaceholderScreen
         title="Directory"
-        description="The member directory unlocks once an admin approves your membership."
+        description="The directory unlocks once an admin approves your account."
       />
     );
   }
@@ -31,7 +31,8 @@ export default async function DirectoryPage() {
       <header>
         <h1 className="text-2xl font-semibold tracking-tight">Directory</h1>
         <p className="text-sm text-zinc-600 dark:text-zinc-400">
-          {members.length} approved {members.length === 1 ? "member" : "members"}
+          {members.length} approved{" "}
+          {members.length === 1 ? "participant" : "participants"}
         </p>
       </header>
 
@@ -42,7 +43,7 @@ export default async function DirectoryPage() {
             className="rounded-lg border border-zinc-200 p-4 dark:border-zinc-800"
           >
             <p className="font-medium">
-              {member.full_name ?? "Member"}
+              {member.full_name ?? "Participant"}
             </p>
             <div className="mt-1 flex flex-col gap-0.5 text-sm text-zinc-600 dark:text-zinc-400">
               {member.email ? (

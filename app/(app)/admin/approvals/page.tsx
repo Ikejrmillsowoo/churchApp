@@ -1,4 +1,4 @@
-// app/(app)/admin/approvals/page.tsx — admin screen listing members awaiting approval,
+// app/(app)/admin/approvals/page.tsx — admin screen listing participants awaiting approval,
 // each with approve/reject actions. Admin access is enforced by the admin layout + RLS.
 import { approveMember, rejectMember } from "@/app/(app)/admin/actions";
 import { createClient } from "@/lib/supabase/server";
@@ -17,7 +17,7 @@ export default async function ApprovalsPage() {
     <main className="flex flex-1 flex-col gap-4 px-5 py-8">
       <header>
         <h1 className="text-2xl font-semibold tracking-tight">
-          Pending members
+          Pending participants
         </h1>
         <p className="text-sm text-zinc-600 dark:text-zinc-400">
           {pending.length} awaiting review
@@ -26,7 +26,7 @@ export default async function ApprovalsPage() {
 
       {pending.length === 0 ? (
         <p className="rounded-lg border border-dashed border-zinc-300 p-6 text-center text-sm text-zinc-500 dark:border-zinc-700">
-          No pending members right now.
+          No pending participants right now.
         </p>
       ) : (
         <ul className="flex flex-col gap-3">
@@ -36,7 +36,7 @@ export default async function ApprovalsPage() {
               className="flex flex-col gap-3 rounded-lg border border-zinc-200 p-4 dark:border-zinc-800"
             >
               <div>
-                <p className="font-medium">{member.full_name ?? "Member"}</p>
+                <p className="font-medium">{member.full_name ?? "Participant"}</p>
                 <p className="text-sm text-zinc-600 dark:text-zinc-400">
                   {member.email ?? "no email"}
                   {member.phone ? ` · ${member.phone}` : ""}

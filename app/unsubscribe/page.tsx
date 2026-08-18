@@ -15,7 +15,7 @@ export default async function UnsubscribePage({
       <main className="flex flex-1 flex-col items-center justify-center gap-3 px-6 py-16 text-center">
         <h1 className="text-2xl font-semibold tracking-tight">Unsubscribed</h1>
         <p className="max-w-sm text-sm text-zinc-600 dark:text-zinc-400">
-          You won&apos;t receive church emails anymore. You can re-enable them
+          You won&apos;t receive program emails anymore. You can re-enable them
           anytime from your profile.
         </p>
       </main>
@@ -42,7 +42,7 @@ export default async function UnsubscribePage({
         Unsubscribe from emails?
       </h1>
       <p className="max-w-sm text-sm text-zinc-600 dark:text-zinc-400">
-        You&apos;ll stop receiving church announcement emails.
+        You&apos;ll stop receiving program announcement emails.
       </p>
       <form action={unsubscribe}>
         <input type="hidden" name="token" value={token} />

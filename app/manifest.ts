@@ -4,9 +4,9 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Church App",
-    short_name: "Church",
-    description: "A church membership and engagement app.",
+    name: "coachIke",
+    short_name: "IKE",
+    description: "Posts, discussion, and updates for your coaching program.",
     start_url: "/",
     scope: "/",
     display: "standalone",

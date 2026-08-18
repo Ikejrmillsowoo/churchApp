@@ -1,6 +1,7 @@
-// scripts/generate-icons.mjs — generates the app's PWA icons (a white cross on a slate
-// background) as PNGs with no external dependencies. Re-run with `node scripts/generate-icons.mjs`
-// after changing the design. These are placeholder icons; swap in real artwork when ready.
+// scripts/generate-icons.mjs — generates the app's PWA icons (a white "IKE" pixel wordmark
+// on a slate background) as PNGs with no external dependencies. Re-run with
+// `node scripts/generate-icons.mjs` after changing the design. These are placeholder icons;
+// swap in real artwork when ready.
 import { deflateSync } from "node:zlib";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -10,6 +11,60 @@ const OUT_DIR = join(dirname(fileURLToPath(import.meta.url)), "..", "public", "i
 
 const BG = [15, 23, 42]; // slate-900 #0F172A
 const FG = [255, 255, 255]; // white
+
+// A tiny 5x7 pixel font (1 = lit) for I, K, E — composed into one "IKE" bitmap below.
+const GLYPHS = {
+  I: [
+    "11111",
+    "00100",
+    "00100",
+    "00100",
+    "00100",
+    "00100",
+    "11111",
+  ],
+  K: [
+    "10001",
+    "10010",
+    "10100",
+    "11000",
+    "10100",
+    "10010",
+    "10001",
+  ],
+  E: [
+    "11111",
+    "10000",
+    "10000",
+    "11110",
+    "10000",
+    "10000",
+    "11111",
+  ],
+};
+
+// Compose "IKE" into a single bitmap, one blank column between letters.
+function buildWordmark() {
+  const letters = ["I", "K", "E"];
+  const rows = 7;
+  const gap = 1;
+  const width = letters.reduce((w, l) => w + GLYPHS[l][0].length, 0) + gap * (letters.length - 1);
+  const bitmap = Array.from({ length: rows }, () => new Array(width).fill(0));
+
+  let x = 0;
+  for (const letter of letters) {
+    const glyph = GLYPHS[letter];
+    for (let row = 0; row < rows; row++) {
+      for (let col = 0; col < glyph[row].length; col++) {
+        bitmap[row][x + col] = glyph[row][col] === "1" ? 1 : 0;
+      }
+    }
+    x += glyph[0].length + gap;
+  }
+  return { bitmap, width, height: rows };
+}
+
+const WORDMARK = buildWordmark();
 
 function crc32(buf) {
   let c = ~0;
@@ -29,26 +84,29 @@ function chunk(type, data) {
   return Buffer.concat([len, typeBuf, data, crc]);
 }
 
-// Draw a Latin cross centered horizontally. `scale` (0-1) shrinks the cross so maskable
-// icons keep it inside the safe zone; the background always fills the whole canvas.
+// Sample the wordmark bitmap for canvas pixel (x, y). `scale` (0-1) shrinks the wordmark so
+// maskable icons keep it inside the safe zone; the background always fills the whole canvas.
 function pixel(x, y, size, scale) {
-  const cx = size / 2;
-  const t = size * 0.12 * scale; // bar thickness
-  const half = t / 2;
-  const top = size * (0.5 - 0.32 * scale);
-  const bottom = size * (0.5 + 0.32 * scale);
-  const crossbarY = size * (0.5 - 0.12 * scale);
-  const armLeft = cx - size * 0.2 * scale;
-  const armRight = cx + size * 0.2 * scale;
+  const markWidth = size * 0.62 * scale;
+  const cellSize = markWidth / WORDMARK.width;
+  const markHeight = cellSize * WORDMARK.height;
 
-  const inVertical = x >= cx - half && x <= cx + half && y >= top && y <= bottom;
-  const inHorizontal =
-    y >= crossbarY - half &&
-    y <= crossbarY + half &&
-    x >= armLeft &&
-    x <= armRight;
+  const left = (size - markWidth) / 2;
+  const top = (size - markHeight) / 2;
 
-  return inVertical || inHorizontal ? FG : BG;
+  const col = Math.floor((x - left) / cellSize);
+  const row = Math.floor((y - top) / cellSize);
+
+  if (
+    row >= 0 &&
+    row < WORDMARK.height &&
+    col >= 0 &&
+    col < WORDMARK.width &&
+    WORDMARK.bitmap[row][col]
+  ) {
+    return FG;
+  }
+  return BG;
 }
 
 function makePng(size, scale) {
@@ -85,7 +143,7 @@ mkdirSync(OUT_DIR, { recursive: true });
 const files = [
   ["icon-192.png", 192, 1],
   ["icon-512.png", 512, 1],
-  ["icon-maskable-512.png", 512, 0.75],
+  ["icon-maskable-512.png", 512, 0.72],
   ["apple-touch-icon.png", 180, 1],
 ];
 

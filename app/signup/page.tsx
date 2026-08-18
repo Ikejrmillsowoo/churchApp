@@ -1,4 +1,4 @@
-// app/signup/page.tsx — new member sign-up form. New accounts start as pending members.
+// app/signup/page.tsx — new participant sign-up form. New accounts start pending approval.
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { signup } from "@/app/auth/actions";
@@ -19,7 +19,7 @@ export default async function SignupPage({
           Create account
         </h1>
         <p className="mb-6 text-sm text-zinc-600 dark:text-zinc-400">
-          New members are reviewed by an admin before being approved.
+          New sign-ups are reviewed before being approved.
         </p>
 
         {error ? (

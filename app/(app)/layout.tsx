@@ -2,6 +2,7 @@
 // bottom navigation. The admin tab is shown only to admins. Route protection is enforced
 // by middleware; this also guarantees a profile exists before rendering.
 import { redirect } from "next/navigation";
+import { AppHeader } from "@/components/app-header";
 import { BottomNav } from "@/components/bottom-nav";
 import { getProfile } from "@/lib/auth";
 
@@ -15,6 +16,7 @@ export default async function AppLayout({
 
   return (
     <div className="flex min-h-full flex-1 flex-col">
+      <AppHeader />
       <div className="flex flex-1 flex-col pb-20">{children}</div>
       <BottomNav isAdmin={profile.role === "admin"} />
     </div>

@@ -89,7 +89,7 @@ export default async function ProfilePage({
               defaultChecked={profile.share_email}
               className="h-4 w-4"
             />
-            Show my email to approved members
+            Show my email to approved participants
           </label>
           <label className="flex items-center gap-3 text-sm">
             <input
@@ -98,7 +98,7 @@ export default async function ProfilePage({
               defaultChecked={profile.share_phone}
               className="h-4 w-4"
             />
-            Show my phone to approved members
+            Show my phone to approved participants
           </label>
         </fieldset>
 
