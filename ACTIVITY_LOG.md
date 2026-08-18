@@ -1,7 +1,22 @@
 # Activity Log
 
-A durable, append-only record of work on the Church App. One entry per phase.
+A durable, append-only record of work on the app. One entry per phase.
 Never overwrite prior entries.
+
+## [2026-07-07 22:15] P1 — Rebrand to coachIke
+- Branch: claude/optimistic-goodall-do8aqs
+- What I did: Rebranded the app from "Church App" to "coachIke" in place — same app, same database, no architecture changes. Planned and approved beforehand via a no-code roadmap artifact (6-phase plan: rebrand, in-app posts/feed, likes+comments, @mentions/notifications, Google sign-in, future coaching tools). This entry covers P1 only.
+- Files added/changed: app/layout.tsx, app/manifest.ts, scripts/generate-icons.mjs, public/icons/* (regenerated), components/app-header.tsx (new), app/(app)/layout.tsx, app/(app)/page.tsx, app/(app)/admin/page.tsx, app/(app)/admin/approvals/page.tsx, app/(app)/directory/page.tsx, app/(app)/profile/page.tsx, app/(app)/messages/page.tsx, app/unsubscribe/page.tsx, app/signup/page.tsx, README.md
+- Key decisions (settled with the user before building, see the roadmap plan):
+  - Coach-only posting model; rebuild in place rather than a fresh deployment.
+  - New identity: app name "coachIke", short name "IKE". Icon/favicon set regenerated as a blocky "IKE" pixel wordmark (white on slate) using the same dependency-free PNG generator approach as the original Phase 3 cross icon — no new libraries or fonts.
+  - Added a slim top `AppHeader` (IKE mark + wordmark) to the signed-in shell, alongside the existing bottom nav.
+  - Copy pass: "member" → "participant", "church" → "program"/dropped, across nav labels, admin screens, directory, profile, signup, and unsubscribe pages.
+  - **Events calendar and Verse of the day were explicitly excluded from the copy pass and left completely as-is** (their own page copy, e.g. "Upcoming church events", is unchanged) — the user asked to keep both features exactly as they are.
+  - No changes to the database, auth, roles, approval flow, or RLS. No changes to internal code identifiers (variable/type names like `Member`, `PendingMember`) — only user-facing strings were touched, to keep this phase additive and low-risk.
+- Manual steps you must do: None. Icons are regenerated PNGs checked into the repo; no new env vars or migrations.
+- Status: in progress (pushed to branch; PR not yet opened)
+- Next: P2 — in-app posts & a reading feed (the coach composer + a Feed screen, likely replacing the current Messages placeholder), then P3 engagement (likes/comments) and P4 (@mentions/notifications). P5 (Google sign-in) can run in parallel any time after P1.
 
 ## [2026-07-07 21:30] Improvement — surface mass-email send results/errors
 - Branch: claude/optimistic-goodall-do8aqs
