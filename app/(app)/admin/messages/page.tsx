@@ -30,7 +30,7 @@ export default async function AdminMessagesPage({
       <header>
         <h1 className="text-2xl font-semibold tracking-tight">Messages</h1>
         <p className="text-sm text-zinc-600 dark:text-zinc-400">
-          Email opted-in members. Each email includes an unsubscribe link.
+          Email opted-in participants. Each email includes an unsubscribe link.
         </p>
       </header>
 
@@ -62,8 +62,8 @@ export default async function AdminMessagesPage({
             defaultValue="approved"
             className="rounded-md border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-500 focus:outline-none dark:border-zinc-700 dark:bg-zinc-900"
           >
-            <option value="approved">Approved members</option>
-            <option value="pending">Pending members</option>
+            <option value="approved">Approved participants</option>
+            <option value="pending">Pending participants</option>
           </select>
         </div>
 
