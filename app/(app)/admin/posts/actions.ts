@@ -5,6 +5,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { isAdmin } from "@/lib/auth";
+import { notifyMentions } from "@/lib/notify-mentions";
 import { createClient } from "@/lib/supabase/server";
 
 type PostFields = {
@@ -43,15 +44,28 @@ async function savePost(
     published_at: status === "published" ? new Date().toISOString() : null,
   };
 
-  const { error } = id
-    ? await supabase.from("posts").update(payload).eq("id", id)
+  const { data: saved, error } = id
+    ? await supabase
+        .from("posts")
+        .update(payload)
+        .eq("id", id)
+        .select("id")
+        .single()
     : await supabase
         .from("posts")
-        .insert({ ...payload, author_id: user?.id ?? null });
+        .insert({ ...payload, author_id: user?.id ?? null })
+        .select("id")
+        .single();
 
   if (error) {
     const target = id ? `/admin/posts/${id}/edit` : "/admin/posts/new";
     redirect(`${target}?error=${encodeURIComponent(error.message)}`);
+  }
+
+  if (status === "published" && user && saved) {
+    await notifyMentions(supabase, user.id, fields.body, {
+      postId: saved.id as string,
+    });
   }
 
   revalidatePath("/admin/posts");
