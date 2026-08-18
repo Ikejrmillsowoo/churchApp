@@ -1,4 +1,4 @@
-// app/layout.tsx — root layout: global fonts, metadata, and page shell for the church PWA.
+// app/layout.tsx — root layout: global fonts, metadata, and page shell for the coachIke PWA.
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ServiceWorkerRegister } from "@/components/service-worker-register";
@@ -15,13 +15,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Church App",
-  description: "A church membership and engagement app.",
-  applicationName: "Church App",
+  title: "coachIke",
+  description: "Posts, discussion, and updates for your coaching program.",
+  applicationName: "coachIke",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Church App",
+    title: "coachIke",
   },
   icons: {
     icon: "/icons/icon-192.png",
