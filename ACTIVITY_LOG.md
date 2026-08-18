@@ -3,6 +3,21 @@
 A durable, append-only record of work on the app. One entry per phase.
 Never overwrite prior entries.
 
+## [2026-08-18 05:15] P3 — Engagement: likes & comments
+- Branch: claude/optimistic-goodall-do8aqs
+- What I did: Added likes and comments on posts. A like button on the post detail page toggles a like and shows the count; a flat (non-threaded) comment thread lets approved participants add comments, edit or delete their own, and lets the coach (admin) hide/unhide or remove any comment. Implemented per the settled decisions: simple like (not upvote/ranking) and flat comments (not threaded).
+- Files added/changed: supabase/migrations/0009_engagement.sql, supabase/migrations/README.md, lib/types.ts (Comment, CommentWithAuthor types), app/(app)/feed/actions.ts (new), components/like-button.tsx (new), components/comment-thread.tsx (new), app/(app)/feed/[id]/page.tsx (rebuilt with likes + comments)
+- Key decisions:
+  - `post_likes` uses a composite primary key `(post_id, user_id)`, so "one like per participant per post" is enforced by the schema itself, not just application logic. Liking uses an idempotent upsert; unliking is a delete of that row.
+  - `comments.hidden` is protected the same way `profiles.role`/`status` already are: a `SECURITY DEFINER` trigger blocks non-admins from changing it, so moderation can't be bypassed even if a participant's own "edit my comment" update slipped an unexpected field through. The author-or-admin update policy still lets an author edit their comment body freely.
+  - Both likes and comments require the target post to be `published` (checked in the RLS `insert` policies), so nobody can react to or comment on a draft, even if they somehow had its ID.
+  - Comment editing uses a server-rendered `?edit=<id>` query param on the post detail page (no client-side state), consistent with the rest of the app's server-action-first, minimal-JS approach — clicking Edit swaps just that comment into an inline form; Cancel is a plain link back to the clean URL.
+  - Comment author names are resolved with a small batched `profiles` lookup (by the distinct author IDs on the page) rather than a cross-table join, since `comments.author_id` and `profiles.id` both reference `auth.users.id` independently.
+  - Scoped to the post detail page only — the feed list view does not show like/comment counts yet, to avoid N+1 queries per post at list-render time; can be added later with a proper aggregate view if it's wanted.
+- Manual steps you must do: Run `supabase/migrations/0009_engagement.sql` in the Supabase SQL Editor. No new env vars.
+- Status: in progress (pushed to branch; PR not yet opened)
+- Next: P4 — @mentions + notifications. P5 (Google sign-in) remains available any time in parallel.
+
 ## [2026-07-07 23:00] P2 — In-app posts & a reading feed
 - Branch: claude/optimistic-goodall-do8aqs
 - What I did: Built the coach's in-app posting backbone. The coach (admin) writes posts from a new admin composer, saving as a draft or publishing; approved participants read published posts in a new Feed tab (which replaces the old Messages placeholder), with a full post detail view. Posts can be pinned to the top of the feed.

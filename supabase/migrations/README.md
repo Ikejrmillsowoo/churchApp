@@ -12,6 +12,7 @@ SQL migrations for the coachIke database. Run them **in numeric order**.
 | `0006_member_directory.sql`     | The `member_directory` masking view for opt-in contact sharing      |
 | `0007_messages.sql`             | The `messages` log table + `unsubscribe_token` on profiles          |
 | `0008_posts.sql`                | The `posts` table (+ RLS) — the coach's in-app feed                 |
+| `0009_engagement.sql`           | `post_likes` and `comments` tables (+ RLS) — likes and comments     |
 
 Every table ships with Row Level Security **enabled** and explicit policies.
 
@@ -34,6 +35,7 @@ supabase db push
 
 - `is_admin()` and `current_status()` are `SECURITY DEFINER` helpers so RLS policies can
   check a user's role/status without recursively querying `profiles`.
-- A trigger blocks non-admins from changing their own `role` or `status`.
+- A trigger blocks non-admins from changing their own `role` or `status`; a similar trigger
+  blocks non-admins from changing a comment's `hidden` flag (moderation).
 - The migrations are idempotent where practical (`if not exists`), but policies are not —
   re-running a file that already created its policies will error on the duplicate policy.
