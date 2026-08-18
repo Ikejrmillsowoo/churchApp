@@ -13,8 +13,13 @@ SQL migrations for the coachIke database. Run them **in numeric order**.
 | `0007_messages.sql`             | The `messages` log table + `unsubscribe_token` on profiles          |
 | `0008_posts.sql`                | The `posts` table (+ RLS) — the coach's in-app feed                 |
 | `0009_engagement.sql`           | `post_likes` and `comments` tables (+ RLS) — likes and comments     |
+| `0010_mentions_notifications.sql` | Unique `handle` on profiles (+ backfill) and the `notifications` table (+ RLS) |
 
 Every table ships with Row Level Security **enabled** and explicit policies.
+
+**Note:** `0010` includes a `do $$ ... $$` backfill block that assigns a handle to every
+existing profile — this can take a moment on a large table but is safe to re-run (it only
+updates rows where `handle is null`).
 
 ## How to apply (Supabase dashboard)
 

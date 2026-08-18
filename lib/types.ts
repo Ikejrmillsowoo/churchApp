@@ -11,6 +11,7 @@ export type Profile = {
   phone: string | null;
   role: Role;
   status: MemberStatus;
+  handle: string;
   share_email: boolean;
   share_phone: boolean;
   email_opt_in: boolean;
@@ -95,4 +96,16 @@ export type Comment = {
 // A comment joined with its author's display name for rendering.
 export type CommentWithAuthor = Comment & {
   authorName: string;
+};
+
+// A notification recording that someone was @mentioned (notifications table, P4).
+export type Notification = {
+  id: string;
+  recipient_id: string;
+  actor_id: string;
+  type: "mention";
+  post_id: string | null;
+  comment_id: string | null;
+  read: boolean;
+  created_at: string;
 };
