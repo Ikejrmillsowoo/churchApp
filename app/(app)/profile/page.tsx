@@ -49,6 +49,22 @@ export default async function ProfilePage({
         </div>
 
         <div className="flex flex-col gap-1">
+          <label htmlFor="handle" className="text-sm font-medium">
+            Handle
+          </label>
+          <input
+            id="handle"
+            type="text"
+            value={`@${profile.handle}`}
+            readOnly
+            className="rounded-md border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm text-zinc-500 dark:border-zinc-800 dark:bg-zinc-900/60"
+          />
+          <span className="text-xs text-zinc-500">
+            Others use this to @mention you in posts and comments.
+          </span>
+        </div>
+
+        <div className="flex flex-col gap-1">
           <label htmlFor="email" className="text-sm font-medium">
             Email
           </label>

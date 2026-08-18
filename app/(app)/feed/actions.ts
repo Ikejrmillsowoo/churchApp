@@ -6,6 +6,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { isAdmin } from "@/lib/auth";
+import { notifyMentions } from "@/lib/notify-mentions";
 import { createClient } from "@/lib/supabase/server";
 
 export async function likePost(formData: FormData) {
@@ -60,9 +61,18 @@ export async function addComment(formData: FormData) {
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  await supabase
+  const { data: comment } = await supabase
     .from("comments")
-    .insert({ post_id: postId, author_id: user.id, body });
+    .insert({ post_id: postId, author_id: user.id, body })
+    .select("id")
+    .single();
+
+  if (comment) {
+    await notifyMentions(supabase, user.id, body, {
+      postId,
+      commentId: comment.id as string,
+    });
+  }
 
   revalidatePath(`/feed/${postId}`);
 }

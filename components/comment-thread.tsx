@@ -11,8 +11,10 @@ import {
 } from "@/app/(app)/feed/actions";
 import { formatEventDate } from "@/lib/datetime";
 import type { CommentWithAuthor } from "@/lib/types";
+import { MentionHint } from "@/components/mention-hint";
+import { MentionText } from "@/components/mention-text";
 
-export function CommentThread({
+export async function CommentThread({
   postId,
   comments,
   currentUserId,
@@ -40,6 +42,7 @@ export function CommentThread({
           placeholder="Add a comment…"
           className="rounded-md border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-500 focus:outline-none dark:border-zinc-700 dark:bg-zinc-900"
         />
+        <MentionHint excludeUserId={currentUserId} />
         <button
           type="submit"
           className="self-start rounded-md bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
@@ -106,7 +109,7 @@ export function CommentThread({
                   </form>
                 ) : (
                   <p className="mt-1 whitespace-pre-wrap text-sm text-zinc-800 dark:text-zinc-200">
-                    {comment.body}
+                    <MentionText text={comment.body} />
                   </p>
                 )}
 

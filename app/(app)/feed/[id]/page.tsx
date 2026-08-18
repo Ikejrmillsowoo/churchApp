@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { CommentThread } from "@/components/comment-thread";
 import { LikeButton } from "@/components/like-button";
+import { MentionText } from "@/components/mention-text";
 import { PlaceholderScreen } from "@/components/placeholder-screen";
 import { getCurrentUser, getProfile } from "@/lib/auth";
 import { formatEventDate } from "@/lib/datetime";
@@ -101,7 +102,7 @@ export default async function PostDetailPage({
           </p>
         </header>
         <div className="whitespace-pre-wrap text-[15px] leading-relaxed text-zinc-800 dark:text-zinc-200">
-          {post.body}
+          <MentionText text={post.body} />
         </div>
         <div className="pt-1">
           <LikeButton

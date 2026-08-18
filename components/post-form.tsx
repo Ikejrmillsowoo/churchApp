@@ -1,8 +1,9 @@
 // components/post-form.tsx — shared create/edit form for coach posts. Two submit buttons
 // (Save draft / Publish) map to two different server actions on the same form.
+import { MentionHint } from "@/components/mention-hint";
 import type { Post } from "@/lib/types";
 
-export function PostForm({
+export async function PostForm({
   saveDraft,
   publishPost,
   post,
@@ -48,6 +49,7 @@ export function PostForm({
           defaultValue={post?.body ?? ""}
           className="rounded-md border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-500 focus:outline-none dark:border-zinc-700 dark:bg-zinc-900"
         />
+        <MentionHint />
       </div>
 
       <div className="flex gap-2">
