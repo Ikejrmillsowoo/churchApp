@@ -80,3 +80,19 @@ export type Post = {
   created_at: string;
   updated_at: string;
 };
+
+// A comment on a post (comments table, P3).
+export type Comment = {
+  id: string;
+  post_id: string;
+  author_id: string | null;
+  body: string;
+  hidden: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+// A comment joined with its author's display name for rendering.
+export type CommentWithAuthor = Comment & {
+  authorName: string;
+};
