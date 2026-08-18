@@ -3,6 +3,20 @@
 A durable, append-only record of work on the app. One entry per phase.
 Never overwrite prior entries.
 
+## [2026-07-07 23:00] P2 — In-app posts & a reading feed
+- Branch: claude/optimistic-goodall-do8aqs
+- What I did: Built the coach's in-app posting backbone. The coach (admin) writes posts from a new admin composer, saving as a draft or publishing; approved participants read published posts in a new Feed tab (which replaces the old Messages placeholder), with a full post detail view. Posts can be pinned to the top of the feed.
+- Files added/changed: supabase/migrations/0008_posts.sql, supabase/migrations/README.md, lib/types.ts (Post type), app/(app)/admin/posts/actions.ts, app/(app)/admin/posts/page.tsx, app/(app)/admin/posts/new/page.tsx, app/(app)/admin/posts/[id]/edit/page.tsx, components/post-form.tsx, app/(app)/admin/page.tsx (Posts link), app/(app)/feed/page.tsx (new), app/(app)/feed/[id]/page.tsx (new), components/bottom-nav.tsx (Messages tab → Feed, /messages → /feed), app/(app)/messages/page.tsx (removed — superseded by /feed)
+- Key decisions:
+  - New `posts` table, RLS-modeled directly on the existing events/daily_verse pattern: approved participants (and admins) read published posts; only admins (the coach) write. Admins additionally see drafts via a separate "admin view all" policy.
+  - Draft vs. published is a `status` column with a `published_at` timestamp set when a post is published (and cleared on unpublish) — so the feed's ordering (pinned first, then most recently published) is unambiguous.
+  - The composer is one form with two submit buttons (Save draft / Publish) wired to two server actions, following the same `formAction`-per-button pattern already used on the admin approvals screen.
+  - Repurposed the bottom nav's existing "Messages" tab into "Feed" (route `/messages` → `/feed`) per the approved P2 plan, rather than adding a separate tab — the admin's mass-email tool keeps its own separate `/admin/messages` screen and is unaffected.
+  - No changes to auth, roles, or the existing Supabase clients — posts reuse the same server/admin client helpers as every other feature.
+- Manual steps you must do: Run `supabase/migrations/0008_posts.sql` in the Supabase SQL Editor. No new env vars.
+- Status: in progress (pushed to branch; PR not yet opened)
+- Next: P3 — engagement (likes/upvotes + comments on posts), then P4 (@mentions + notifications). P5 (Google sign-in) remains available any time in parallel.
+
 ## [2026-07-07 22:15] P1 — Rebrand to coachIke
 - Branch: claude/optimistic-goodall-do8aqs
 - What I did: Rebranded the app from "Church App" to "coachIke" in place — same app, same database, no architecture changes. Planned and approved beforehand via a no-code roadmap artifact (6-phase plan: rebrand, in-app posts/feed, likes+comments, @mentions/notifications, Google sign-in, future coaching tools). This entry covers P1 only.

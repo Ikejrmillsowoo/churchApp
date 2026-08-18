@@ -38,6 +38,18 @@ export default async function AdminPage() {
       </Link>
 
       <Link
+        href="/admin/posts"
+        className="flex items-center justify-between rounded-lg border border-zinc-200 p-4 transition-colors hover:bg-zinc-50 dark:border-zinc-800 dark:hover:bg-zinc-900"
+      >
+        <div>
+          <p className="font-medium">Posts</p>
+          <p className="text-sm text-zinc-600 dark:text-zinc-400">
+            Write and publish posts to the feed
+          </p>
+        </div>
+      </Link>
+
+      <Link
         href="/admin/events"
         className="flex items-center justify-between rounded-lg border border-zinc-200 p-4 transition-colors hover:bg-zinc-50 dark:border-zinc-800 dark:hover:bg-zinc-900"
       >

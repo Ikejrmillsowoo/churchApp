@@ -1,14 +1,17 @@
 # Supabase migrations
 
-SQL migrations for the Church App database. Run them **in numeric order**.
+SQL migrations for the coachIke database. Run them **in numeric order**.
 
-| File                       | Creates                                                              |
-| -------------------------- | ------------------------------------------------------------------- |
-| `0001_init_profiles.sql`   | `pgcrypto`, helper functions, and the `profiles` table (+ RLS)      |
-| `0002_events.sql`          | The `events` table (+ RLS)                                           |
-| `0003_daily_verse.sql`     | The `daily_verse` table (+ RLS)                                      |
-| `0004_handle_new_user.sql` | Trigger creating a pending-member profile on signup (Phase 2)       |
-| `0005_fix_protect_trigger.sql` | Fixes the protect trigger so the first admin can be bootstrapped |
+| File                            | Creates                                                              |
+| -------------------------------- | --------------------------------------------------------------------|
+| `0001_init_profiles.sql`        | `pgcrypto`, helper functions, and the `profiles` table (+ RLS)      |
+| `0002_events.sql`               | The `events` table (+ RLS)                                          |
+| `0003_daily_verse.sql`          | The `daily_verse` table (+ RLS)                                     |
+| `0004_handle_new_user.sql`      | Trigger creating a pending-participant profile on signup            |
+| `0005_fix_protect_trigger.sql`  | Fixes the protect trigger so the first admin can be bootstrapped    |
+| `0006_member_directory.sql`     | The `member_directory` masking view for opt-in contact sharing      |
+| `0007_messages.sql`             | The `messages` log table + `unsubscribe_token` on profiles          |
+| `0008_posts.sql`                | The `posts` table (+ RLS) — the coach's in-app feed                 |
 
 Every table ships with Row Level Security **enabled** and explicit policies.
 
@@ -16,9 +19,8 @@ Every table ships with Row Level Security **enabled** and explicit policies.
 
 1. Open your project at <https://supabase.com/dashboard> → **SQL Editor**.
 2. Open a **New query**, paste the contents of `0001_init_profiles.sql`, and **Run**.
-3. Repeat for `0002_events.sql`, then `0003_daily_verse.sql`, in order.
-4. Verify under **Table Editor** that `profiles`, `events`, and `daily_verse` exist
-   and each shows the green **RLS enabled** badge.
+3. Repeat for the rest of the files, in numeric order.
+4. Verify under **Table Editor** that each table shows the green **RLS enabled** badge.
 
 ## How to apply (Supabase CLI, optional)
 

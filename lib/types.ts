@@ -67,3 +67,16 @@ export type Message = {
   recipient_count: number;
   created_at: string;
 };
+
+// A coach post in the feed (posts table, P2).
+export type Post = {
+  id: string;
+  author_id: string | null;
+  title: string | null;
+  body: string;
+  status: "draft" | "published";
+  pinned: boolean;
+  published_at: string | null;
+  created_at: string;
+  updated_at: string;
+};

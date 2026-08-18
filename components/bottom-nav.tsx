@@ -1,5 +1,5 @@
-// components/bottom-nav.tsx — fixed mobile-first bottom navigation. Shows the core member
-// tabs plus an admin-only tab that is hidden from regular members.
+// components/bottom-nav.tsx — fixed mobile-first bottom navigation. Shows the core
+// participant tabs plus an admin-only tab that is hidden from regular participants.
 "use client";
 
 import Link from "next/link";
@@ -29,7 +29,7 @@ const icons = {
       <path d="M3.5 9.5h17M8 3.5v3M16 3.5v3" />
     </>
   ),
-  messages: (
+  feed: (
     <path d="M5 5h14a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H9l-4 3.5V6a1 1 0 0 1 1-1Z" />
   ),
   admin: (
@@ -44,7 +44,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/", label: "Home", icon: icons.home },
   { href: "/directory", label: "Directory", icon: icons.directory },
   { href: "/calendar", label: "Calendar", icon: icons.calendar },
-  { href: "/messages", label: "Messages", icon: icons.messages },
+  { href: "/feed", label: "Feed", icon: icons.feed },
   { href: "/admin", label: "Admin", icon: icons.admin, adminOnly: true },
 ];
 
